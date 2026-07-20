@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/view_drawable_notification">
+
+        <TextView
+            android:id="@+id/id_title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="16dp"
+            android:text="Label Label"
+            android:textColor="@color/blue"
+            android:textSize="14sp"
+            android:fontFamily="@font/montserrat_semibold"
+            />
+
+        <TextView
+            android:id="@+id/id_details_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/id_title_text_view"
+            android:layout_below="@id/id_title_text_view"
+            android:layout_alignEnd="@id/id_title_text_view"
+            android:layout_marginTop="8dp"
+            android:text="Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/montserrat_semibold"
+            />
+
+        <TextView
+            android:id="@+id/id_date_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/id_details_text_view"
+            android:layout_below="@id/id_details_text_view"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="12-8-2020"
+            android:textColor="@color/dark_gray"
+            android:textSize="12sp"
+            android:fontFamily="@font/montserrat_regular"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>

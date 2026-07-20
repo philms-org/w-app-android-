@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "248737689457",
+    "project_id": "wing-me-b80e3",
+    "storage_bucket": "wing-me-b80e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248737689457:android:5ace195ed1e82596d450d0",
+        "android_client_info": {
+          "package_name": "com.vastlb.wing_me"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "248737689457-9t7uua8142n079vbgpr72e2frbt7jhbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vastlb.wing_me",
+            "certificate_hash": "4738401c3a469d9035f5c3c35314ee54d490f9f1"
+          }
+        },
+        {
+          "client_id": "248737689457-e3h64s3ql57u3ifsaneer9kp3b3626b5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vastlb.wing_me",
+            "certificate_hash": "a66316960b1084abbed2aea495fd97d626fd4f27"
+          }
+        },
+        {
+          "client_id": "248737689457-katsp798urmksb29csrfnmqphvn34irt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vastlb.wing_me",
+            "certificate_hash": "94449eba60103f00f29474c18f996a43aaeb4472"
+          }
+        },
+        {
+          "client_id": "248737689457-q51lfimtu7146g9e2okqljt2qu1fpsgb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp0SaduKCY2QKGCqb9-sCRVJqphfRHoQQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "248737689457-q51lfimtu7146g9e2okqljt2qu1fpsgb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "248737689457-p0kbqn1soees86o0bl87mlab5ogq8f0j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vastlb.Wing-Me"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

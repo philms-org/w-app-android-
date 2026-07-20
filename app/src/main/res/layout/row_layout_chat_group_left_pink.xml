@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black">
+
+    <RelativeLayout
+        android:id="@+id/id_text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="100dp"
+        android:minWidth="40dp"
+        android:minHeight="40dp"
+        android:background="@drawable/view_drawable_chat_message_pink">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/id_name_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Label Label"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:fontFamily="@font/montserrat_semibold"
+                />
+
+            <TextView
+                android:id="@+id/id_message_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="@font/montserrat_semibold"
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/id_time_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/id_text_layout"
+        android:layout_marginStart="-92dp"
+        android:layout_alignBottom="@id/id_text_layout"
+        android:layout_marginBottom="8dp"
+        android:text="8:00 AM"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:fontFamily="@font/montserrat_regular"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".Main.MessagesFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/id_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Home"
+                android:textSize="20sp"
+                android:fontFamily="@font/montserrat_semibold"
+                android:textColor="@color/white"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/id_top_layout">
+
+            <ScrollView
+                android:id="@+id/id_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:id="@+id/id_banner_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                app:layout_constraintDimensionRatio="H,3:2"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/id_banner_recycler_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    />
+
+                            </RelativeLayout>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/id_events_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/id_events_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="20dp"
+                            android:text="Ongoing Events:"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:textColor="@color/white"
+                            />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/id_events_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/id_events_title"
+                            android:layout_marginTop="15dp"
+                            android:nestedScrollingEnabled="false"
+                            />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/id_new_added_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/id_new_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="20dp"
+                            android:text="New added locations:"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:textColor="@color/white"
+                            />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/id_new_added_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/id_new_title"
+                            android:layout_marginTop="15dp"
+                            android:nestedScrollingEnabled="false"
+                            />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/id_most_visited_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/id_most_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="20dp"
+                            android:text="Most visited locations:"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:textColor="@color/white"
+                            />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/id_most_visited_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/id_most_title"
+                            android:layout_marginTop="15dp"
+                            android:nestedScrollingEnabled="false"
+                            />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/id_last_visited_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/id_last_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="20dp"
+                            android:text="Last visited by you:"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:textColor="@color/white"
+                            />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/id_last_visited_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/id_last_title"
+                            android:layout_marginTop="15dp"
+                            android:nestedScrollingEnabled="false"
+                            />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <ProgressBar
+                android:id="@+id/id_progress_bar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

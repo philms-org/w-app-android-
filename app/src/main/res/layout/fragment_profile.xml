@@ -1,0 +1,969 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".Main.ProfileFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/id_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="My Profile"
+                android:textSize="20sp"
+                android:fontFamily="@font/montserrat_semibold"
+                android:textColor="@color/white"
+                />
+
+            <ImageView
+                android:id="@+id/id_notifications"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:padding="3dp"
+                android:src="@drawable/icon_notification"
+                app:tint="@color/blue"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/id_top_layout">
+
+            <ScrollView
+                android:id="@+id/id_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:id="@+id/id_image_layout"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/view_drawable_profile_image">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="4dp"
+                            app:cardCornerRadius="52dp">
+
+                            <ImageView
+                                android:id="@+id/id_image_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/image"
+                                android:scaleType="centerCrop"
+                                />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/id_name_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/id_image_layout"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="40dp"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:gravity="center_horizontal"
+                        android:text="Label Label Label"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <LinearLayout
+                        android:id="@+id/id_linear_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/id_name_text_view"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:id="@+id/id_setup_profile_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginBottom="20dp"
+                            android:background="@drawable/view_drawable_logout_button">
+
+                            <TextView
+                                android:id="@+id/id_setup_profile"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/montserrat_semibold"
+                                android:gravity="center"
+                                android:text="Continue Profile Setup"
+                                android:textColor="@color/black"
+                                android:textSize="16sp" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/id_edit_profile_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/view_drawable_profile_button_blue">
+
+                            <TextView
+                                android:id="@+id/id_edit_profile"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/montserrat_semibold"
+                                android:gravity="center"
+                                android:text="Edit My Account"
+                                android:textColor="@color/white"
+                                android:textSize="16sp" />
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="20dp"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:id="@+id/id_settings_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/view_drawable_profile_button_blue">
+
+                                <TextView
+                                    android:id="@+id/id_settings"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:fontFamily="@font/montserrat_semibold"
+                                    android:gravity="center"
+                                    android:text="Settings"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="20dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/view_drawable_logout_button">
+
+                                <TextView
+                                    android:id="@+id/id_logout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:fontFamily="@font/montserrat_semibold"
+                                    android:gravity="center"
+                                    android:text="Logout"
+                                    android:textColor="@color/red"
+                                    android:textSize="16sp" />
+
+                                <ProgressBar
+                                    android:id="@+id/id_logout_progress_bar"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_centerInParent="true"
+                                    android:theme="@style/Red"
+                                    android:visibility="gone" />
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/id_linear_layout">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginEnd="30dp"
+                            android:layout_marginBottom="40dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/view_drawable_profile"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Phone Number"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_phone_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Email"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_email_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="City"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_city_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Nationality"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_nationality_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/view_drawable_profile"
+                                android:layout_marginTop="20dp"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Age"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_age_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Gender"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_gender_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:visibility="gone">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Height"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_height_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/view_drawable_profile"
+                                android:layout_marginTop="20dp"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Relationship"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_relationship_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray"
+                                        />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Looking for"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_looking_for_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Favorite Drink"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_drink_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="On the weekends I..."
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_friday_night_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0.5dp"
+                                        android:layout_marginStart="20dp"
+                                        android:layout_marginEnd="20dp"
+                                        android:background="@color/gray" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="horizontal">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginStart="20dp"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Profession / Industry"
+                                                android:textColor="@color/dark_gray"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1">
+
+                                            <TextView
+                                                android:id="@+id/id_profession_text_view"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="20dp"
+                                                android:gravity="end"
+                                                android:fontFamily="@font/montserrat_semibold"
+                                                android:text="Label"
+                                                android:textColor="@color/black"
+                                                android:textSize="14sp" />
+
+                                        </RelativeLayout>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </ScrollView>
+
+            <ProgressBar
+                android:id="@+id/id_progress_bar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

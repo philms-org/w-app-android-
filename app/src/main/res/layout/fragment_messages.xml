@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
+    tools:context=".Main.MessagesFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/id_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Messages"
+                android:textSize="20sp"
+                android:fontFamily="@font/montserrat_semibold"
+                android:textColor="@color/white"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/id_top_layout">
+            
+            <RelativeLayout
+                android:id="@+id/id_tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/id_messages"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="Connections"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:textColor="@color/blue"
+                            />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/id_messages_selected_view"
+                            android:layout_width="40dp"
+                            android:layout_height="8dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginBottom="-4dp"
+                            app:cardElevation="0dp"
+                            app:cardCornerRadius="4dp">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/blue"
+                                />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/id_groups"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="Groups"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:textColor="@color/blue"
+                            />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/id_groups_selected_view"
+                            android:layout_width="40dp"
+                            android:layout_height="8dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginBottom="-4dp"
+                            app:cardElevation="0dp"
+                            app:cardCornerRadius="4dp">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/blue"
+                                />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/id_messages_refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"
+                android:layout_below="@id/id_tab_layout">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/id_messages_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/id_groups_refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"
+                android:layout_below="@id/id_tab_layout">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/id_groups_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <RelativeLayout
+                android:id="@+id/id_no_messages_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/image_no_messages"
+                    android:scaleType="centerCrop"
+                    />
+
+                <RelativeLayout
+                    android:id="@+id/id_share"
+                    android:layout_width="260dp"
+                    android:layout_height="86dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="60dp"
+                    android:background="@drawable/view_drawable_share_button">
+
+                    <ImageView
+                        android:id="@+id/id_share_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/icon_share"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/id_share_icon"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="4dp"
+                        android:text="Share Wing Me"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:textColor="@color/white"
+                        />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <ProgressBar
+                android:id="@+id/id_progress_bar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

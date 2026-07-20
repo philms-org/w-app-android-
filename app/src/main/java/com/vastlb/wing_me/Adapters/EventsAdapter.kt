@@ -1,0 +1,55 @@
+
+package com.vastlb.wing_me.Adapters
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
+import com.vastlb.wing_me.Classes.Constants
+import com.vastlb.wing_me.DataClasses.EventClass
+import com.vastlb.wing_me.R
+
+class EventsAdapter(val array: ArrayList<EventClass>, val select: (index: Int) -> Unit): RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
+
+    class ViewHolder(itemView: View, p1: Int): RecyclerView.ViewHolder(itemView) {
+        val relativeLayout: RelativeLayout = itemView.findViewById(R.id.id_relative_layout)
+        val imageView: ImageView = itemView.findViewById(R.id.id_image_view)
+        val titleTextView: TextView = itemView.findViewById(R.id.id_title_text_view)
+        val detailsTextView: TextView = itemView.findViewById(R.id.id_details_text_view)
+        val dateTextView: TextView = itemView.findViewById(R.id.id_date_text_view)
+    }
+
+    override fun getItemCount(): Int {
+        return array.size
+    }
+
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
+        val cell = LayoutInflater.from(p0.context).inflate(R.layout.row_layout_event, p0, false)
+        return ViewHolder(cell, p1)
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
+        val jsonObject: EventClass = array[p1]
+
+        Picasso.get().load(Constants.url + jsonObject.imageURL).into(p0.imageView)
+
+        p0.titleTextView.setText(jsonObject.title)
+        p0.detailsTextView.setText(jsonObject.details)
+
+        if (jsonObject.startDate == jsonObject.endDate) {
+            p0.dateTextView.setText(jsonObject.startDate)
+        } else {
+            p0.dateTextView.setText("${jsonObject.startDate} - ${jsonObject.endDate}")
+        }
+
+        p0.relativeLayout.setOnClickListener {
+            select(p1)
+        }
+    }
+}

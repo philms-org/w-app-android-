@@ -1,0 +1,17 @@
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/blue</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="Red" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/red</item>
+    </style>
+</resources>

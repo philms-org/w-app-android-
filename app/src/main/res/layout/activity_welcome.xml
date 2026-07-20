@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".Launch.WelcomeActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@drawable/view_drawable_gradient_diagonal_80">
+
+                <ImageView
+                    android:layout_width="280dp"
+                    android:layout_height="280dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/icon_logo"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/blue">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/view_drawable_welcome">
+
+                    <TextView
+                        android:id="@+id/id_title_text_view"
+                        android:layout_width="280dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="60dp"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="center_horizontal"
+                        android:text="Welcome to Wing Me, your virtual wing (wo)man"
+                        android:textColor="@color/white"
+                        android:textSize="28sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/id_title_text_view"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="60dp"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginBottom="80dp"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:background="@drawable/view_drawable_welcome_button">
+
+                            <TextView
+                                android:id="@+id/id_register"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/montserrat_semibold"
+                                android:gravity="center"
+                                android:text="Create an Account"
+                                android:textColor="@color/white"
+                                android:textSize="18sp" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_marginTop="24dp"
+                            android:background="@drawable/view_drawable_welcome_login">
+
+                            <TextView
+                                android:id="@+id/id_login"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/montserrat_semibold"
+                                android:gravity="center"
+                                android:text="Sign in"
+                                android:textColor="@color/black"
+                                android:textSize="18sp" />
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

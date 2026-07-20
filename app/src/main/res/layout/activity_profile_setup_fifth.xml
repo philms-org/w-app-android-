@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".Launch.RegisterActivity">
+
+    <RelativeLayout
+        android:id="@+id/id_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <ImageView
+            android:id="@+id/id_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/icon_back"
+            android:padding="7dp"
+            app:tint="@color/blue"
+            />
+
+        <ProgressBar
+            android:id="@+id/id_progress_bar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:padding="10dp"
+            android:visibility="gone"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="Setup Profile"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/id_top_layout">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="60dp"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/id_city_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:text="City of Residence"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/id_city_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_below="@id/id_city_title"
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/view_drawable_edit_text"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:inputType="text"
+                            />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <TextView
+                            android:id="@+id/id_drink_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:text="Favorite drink"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/id_drink_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_below="@id/id_drink_title"
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/view_drawable_edit_text"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:inputType="text"
+                            />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <TextView
+                            android:id="@+id/id_friday_activity_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:text="On the weekends I..."
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/id_friday_activity_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_below="@id/id_friday_activity_title"
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/view_drawable_edit_text"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:inputType="text"
+                            />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <TextView
+                            android:id="@+id/id_profession_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:text="Profession / Industry"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/id_profession_edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_below="@id/id_profession_title"
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/view_drawable_edit_text"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:inputType="text"
+                            />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="40dp"
+                        android:background="@drawable/view_drawable_button">
+
+                        <TextView
+                            android:id="@+id/id_save"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:gravity="center"
+                            android:text="Save"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <ProgressBar
+                            android:id="@+id/id_save_progress_bar"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerInParent="true"
+                            android:theme="@style/Light"
+                            android:visibility="gone"
+                            />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+</RelativeLayout>

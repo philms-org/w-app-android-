@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue">#17BFD9</color>
+    <color name="pink">#EC2C91</color>
+
+    <color name="back_gray">#F0F6FA</color>
+    <color name="dark_gray">#919191</color>
+    <color name="light_gray">#F3F3F3</color>
+    <color name="gray">#D5D5D5</color>
+    <color name="image">#EBEBEB</color>
+
+    <color name="green">#009193</color>
+    <color name="red">#D52600</color>
+    <color name="facebook">#4267B2</color>
+    <color name="light_blue">#D0F2F7</color>
+
+    <color name="black">#231E20</color>
+    <color name="white">#FFFFFF</color>
+    <color name="clear">#00FFFFFF</color>
+    <color name="fade">#80000000</color>
+    <color name="black_60">#80000000</color>
+</resources>

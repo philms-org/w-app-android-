@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/id_relative_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_gray">
+
+    <RelativeLayout
+        android:id="@+id/id_add_layout"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/id_add"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/icon_add"
+            app:tint="@color/white"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_image_layout"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/id_add_layout"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/view_drawable_user_image_blue">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            app:cardCornerRadius="35dp">
+
+            <ImageView
+                android:id="@+id/id_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:scaleType="centerCrop"
+                />
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@id/id_image_layout"
+        android:layout_toStartOf="@id/id_like_layout"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/id_name_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Label Label"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/montserrat_semibold"
+                android:maxLines="1"
+                />
+            
+            <ImageView
+                android:id="@+id/id_badge_image_view"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_toEndOf="@id/id_name_text_view"
+                android:layout_marginStart="8dp"
+                android:scaleType="centerCrop"
+                app:tint="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/id_badge_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/id_badge_image_view"
+                android:layout_marginStart="8dp"
+                android:text="Label"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/montserrat_semibold"
+                android:maxLines="1"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/id_details_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Label Label Label Label Label Label"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_regular"
+            android:maxLines="1"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp">
+
+            <TextView
+                android:id="@+id/id_comment_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Label Label Label"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/montserrat_semibold"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_like_layout"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp">
+
+        <ImageView
+            android:id="@+id/id_like"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/icon_heart"
+            app:tint="@color/white"
+            />
+
+        <TextView
+            android:id="@+id/id_likes_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="17"
+            android:textSize="12sp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/white"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>

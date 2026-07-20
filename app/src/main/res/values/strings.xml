@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">Wing Me</string>
+    <string name="language">en</string>
+
+    <string name="alert_empty">All fields must be filled to proceed</string>
+    <string name="alert_phone_number">Please enter a valid (only numerical) phone number</string>
+    <string name="alert_both">Both passwords must be similar</string>
+    <string name="alert_verification">The verification code is not correct</string>
+
+    <string name="alert_logout">Are you sure you want to logout?</string>
+    <string name="alert_block">Are you sure you want to block this user?</string>
+    <string name="alert_report">Are you sure you want to report this user?</string>
+    <string name="alert_unblock">Are you sure you want to unblock this user?</string>
+    <string name="alert_delete">Are you sure you want to delete this conversation?</string>
+    <string name="alert_setup">Your profile is incomplete, do you want to continue setting up your profile?</string>
+    <string name="alert_delete_group">Are you sure you want to delete this group?</string>
+    <string name="alert_leave_group">Are you sure you want to leave this group?</string>
+
+    <string name="alert_password_changed">Your password has been changed</string>
+    <string name="alert_info_edited">Your info has been edited</string>
+    <string name="alert_message_sent">Your message has been sent</string>
+    <string name="alert_reported">This user has been reported</string>
+    <string name="alert_password_reset">Your password has been reset</string>
+
+    <string name="ok">OK</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="wing_me">Wing me</string>
+    <string name="logout">Logout</string>
+    <string name="report">Report</string>
+    <string name="block">Block</string>
+    <string name="unblock">Unblock</string>
+    <string name="delete">Delete</string>
+
+    <string name="select_option">Select an Option</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="cancel">Cancel</string>
+    <string name="maybe_later">Maybe later</string>
+
+    <string name="about_us">About us</string>
+    <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <string name="facebook_app_id">982225715817283</string>
+    <string name="fb_login_protocol_scheme">fb982225715817283</string>
+    <string name="facebook_client_token">dce890061321a29112ec476495bd712e</string>
+
+    <string name="style_json">
+        [{
+        "featureType": "landscape",
+        "elementType": "labels",
+        "stylers": [{
+        "visibility": "off"
+        }]
+        },
+        {
+        "featureType": "poi",
+        "elementType": "labels",
+        "stylers": [{
+        "visibility": "off"
+        }]
+        },
+        {
+        "featureType": "transit",
+        "elementType": "labels",
+        "stylers": [{
+        "visibility": "off"
+        }]
+        }]
+    </string>
+</resources>

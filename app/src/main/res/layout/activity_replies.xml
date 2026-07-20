@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".Launch.RegisterActivity">
+
+    <RelativeLayout
+        android:id="@+id/id_comment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/id_image_layout"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/view_drawable_user_image_blue">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                app:cardCornerRadius="35dp">
+
+                <ImageView
+                    android:id="@+id/id_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/black"
+                    android:scaleType="centerCrop"
+                    />
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@id/id_image_layout"
+            android:layout_toStartOf="@id/id_like_layout"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/id_name_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Label Label"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/montserrat_semibold"
+                    android:maxLines="1"
+                    />
+
+                <ImageView
+                    android:id="@+id/id_badge_image_view"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_toEndOf="@id/id_name_text_view"
+                    android:layout_marginStart="8dp"
+                    android:scaleType="centerCrop"
+                    app:tint="@color/blue"
+                    />
+
+                <TextView
+                    android:id="@+id/id_badge_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/id_badge_image_view"
+                    android:layout_marginStart="8dp"
+                    android:text="Label"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/montserrat_semibold"
+                    android:maxLines="1"
+                    />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/id_details_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Label Label Label Label Label Label"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/montserrat_regular"
+                android:maxLines="1"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp">
+
+                <TextView
+                    android:id="@+id/id_comment_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Label Label Label"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/montserrat_semibold"
+                    />
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginTop="-2dp"
+                    android:layout_toEndOf="@id/id_comment_text_view"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/icon_reply"
+                    app:tint="#00FA92"
+                    />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/id_like_layout"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/id_like"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/icon_heart"
+                app:tint="@color/white"
+                />
+
+            <TextView
+                android:id="@+id/id_likes_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="17"
+                android:textSize="12sp"
+                android:fontFamily="@font/montserrat_semibold"
+                android:textColor="@color/white"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/id_comment_layout">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="-20dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
+                android:background="@color/dark_gray">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/id_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/id_bottom_layout"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:clipToPadding="false"
+                    />
+
+                <RelativeLayout
+                    android:id="@+id/id_bottom_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/dark_gray">
+
+                    <EditText
+                        android:id="@+id/id_comment_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_toStartOf="@id/id_send_layout"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/clear"
+                        android:hint="Reply..."
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/gray"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/montserrat_semibold"
+                        />
+
+                    <RelativeLayout
+                        android:id="@+id/id_send_layout"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="20dp"
+                        android:background="@drawable/view_drawable_send">
+
+                        <ImageView
+                            android:id="@+id/id_send"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingStart="6dp"
+                            android:paddingTop="4dp"
+                            android:paddingEnd="2dp"
+                            android:paddingBottom="4dp"
+                            android:src="@drawable/icon_send"
+                            app:tint="@color/white" />
+
+                        <ProgressBar
+                            android:id="@+id/id_send_progress_bar"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerInParent="true"
+                            android:theme="@style/Light"
+                            android:visibility="gone" />
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/id_progress_bar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerInParent="true"
+        />
+
+</RelativeLayout>
