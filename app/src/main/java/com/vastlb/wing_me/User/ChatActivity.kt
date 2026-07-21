@@ -10,16 +10,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.Room
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.squareup.picasso.Picasso
 import com.vastlb.wing_me.Adapters.ChatAdapter
 import com.vastlb.wing_me.Classes.Constants
+import com.vastlb.wing_me.Classes.LocalMessage
+import com.vastlb.wing_me.Classes.LocalMessageStore
 import com.vastlb.wing_me.Classes.Singleton
-import com.vastlb.wing_me.CoreData.Message
-import com.vastlb.wing_me.CoreData.MessageDao
-import com.vastlb.wing_me.CoreData.MessageDatabase
 import com.vastlb.wing_me.DataClasses.ChatDateClass
 import com.vastlb.wing_me.DataClasses.ChatMessageClass
 import com.vastlb.wing_me.R
@@ -32,7 +30,7 @@ import java.util.concurrent.TimeUnit
 
 class ChatActivity: AppCompatActivity() {
 
-    lateinit var messageDao: MessageDao
+    lateinit var messageDao: LocalMessageStore
 
     lateinit var chatAdapter: ChatAdapter
 
@@ -86,7 +84,7 @@ class ChatActivity: AppCompatActivity() {
             }
         }
 
-        messageDao = Room.databaseBuilder(this, MessageDatabase::class.java, "Messages").allowMainThreadQueries().build().dataDao()
+        messageDao = LocalMessageStore.named("Messages")
 
         id_back.setOnClickListener {
             Constants.setChatMessage = null
@@ -384,7 +382,7 @@ class ChatActivity: AppCompatActivity() {
             jsonObject.lastMessageID = messageID
             messageDao.update(jsonObject)
         } else {
-            messageDao.insert(Message(null, id, messageID))
+            messageDao.insert(LocalMessage(null, id, messageID))
         }
     }
 

@@ -18,14 +18,12 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
+import com.vastlb.wing_me.Classes.LocalMessageStore
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.vastlb.wing_me.Adapters.GroupsAdapter
 import com.vastlb.wing_me.Adapters.MessagesAdapter
 import com.vastlb.wing_me.Classes.Constants
 import com.vastlb.wing_me.Classes.Singleton
-import com.vastlb.wing_me.CoreData.MessageDao
-import com.vastlb.wing_me.CoreData.MessageDatabase
 import com.vastlb.wing_me.DataClasses.GroupClass
 import com.vastlb.wing_me.DataClasses.MessageClass
 import com.vastlb.wing_me.Groups.GroupChatActivity
@@ -42,8 +40,8 @@ class MessagesFragment: Fragment() {
 
     lateinit var showBadge: () -> Unit
 
-    lateinit var messageDao: MessageDao
-    lateinit var groupDao: MessageDao
+    lateinit var messageDao: LocalMessageStore
+    lateinit var groupDao: LocalMessageStore
 
     lateinit var messagesAdapter: MessagesAdapter
     lateinit var groupsAdapter: GroupsAdapter
@@ -101,8 +99,8 @@ class MessagesFragment: Fragment() {
             }
         }
 
-        messageDao = Room.databaseBuilder(requireContext(), MessageDatabase::class.java, "Messages").allowMainThreadQueries().build().dataDao()
-        groupDao = Room.databaseBuilder(requireContext(), MessageDatabase::class.java, "Groups").allowMainThreadQueries().build().dataDao()
+        messageDao = LocalMessageStore.named("Messages")
+        groupDao = LocalMessageStore.named("Groups")
 
         Constants.reloadMessages = {
             reloadMessages()
@@ -263,7 +261,7 @@ class MessagesFragment: Fragment() {
     }
 
     fun refreshMessages() {
-        messageDao = Room.databaseBuilder(requireContext(), MessageDatabase::class.java, "Messages").allowMainThreadQueries().build().dataDao()
+        messageDao = LocalMessageStore.named("Messages")
 
         messagesArray.clear()
         messagesAdapter.notifyDataSetChanged()
@@ -274,7 +272,7 @@ class MessagesFragment: Fragment() {
     }
 
     fun refreshGroups() {
-        groupDao = Room.databaseBuilder(requireContext(), MessageDatabase::class.java, "Groups").allowMainThreadQueries().build().dataDao()
+        groupDao = LocalMessageStore.named("Groups")
 
         groupsArray.clear()
         groupsAdapter.notifyDataSetChanged()
@@ -285,7 +283,7 @@ class MessagesFragment: Fragment() {
     }
 
     fun reloadMessages() {
-        messageDao = Room.databaseBuilder(requireContext(), MessageDatabase::class.java, "Messages").allowMainThreadQueries().build().dataDao()
+        messageDao = LocalMessageStore.named("Messages")
 
         messagesArray.clear()
         messagesAdapter.notifyDataSetChanged()
@@ -294,7 +292,7 @@ class MessagesFragment: Fragment() {
     }
 
     fun reloadGroups() {
-        groupDao = Room.databaseBuilder(requireContext(), MessageDatabase::class.java, "Groups").allowMainThreadQueries().build().dataDao()
+        groupDao = LocalMessageStore.named("Groups")
 
         groupsArray.clear()
         groupsAdapter.notifyDataSetChanged()

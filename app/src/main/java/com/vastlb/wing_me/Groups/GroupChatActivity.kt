@@ -10,16 +10,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.Room
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.squareup.picasso.Picasso
 import com.vastlb.wing_me.Adapters.GroupChatAdapter
 import com.vastlb.wing_me.Classes.Constants
+import com.vastlb.wing_me.Classes.LocalMessage
+import com.vastlb.wing_me.Classes.LocalMessageStore
 import com.vastlb.wing_me.Classes.Singleton
-import com.vastlb.wing_me.CoreData.Message
-import com.vastlb.wing_me.CoreData.MessageDao
-import com.vastlb.wing_me.CoreData.MessageDatabase
 import com.vastlb.wing_me.DataClasses.ChatDateClass
 import com.vastlb.wing_me.DataClasses.GroupChatMessageClass
 import com.vastlb.wing_me.R
@@ -33,7 +31,7 @@ import kotlin.collections.ArrayList
 
 class GroupChatActivity: AppCompatActivity() {
 
-    lateinit var groupsDao: MessageDao
+    lateinit var groupsDao: LocalMessageStore
 
     lateinit var chatAdapter: GroupChatAdapter
 
@@ -62,7 +60,7 @@ class GroupChatActivity: AppCompatActivity() {
 
     fun setViews() {
         Constants.reloadGroup = {
-            groupsDao = Room.databaseBuilder(this, MessageDatabase::class.java, "Groups").allowMainThreadQueries().build().dataDao()
+            groupsDao = LocalMessageStore.named("Groups")
 
             array.clear()
             lastDate = ""
@@ -96,7 +94,7 @@ class GroupChatActivity: AppCompatActivity() {
             }
         }
 
-        groupsDao = Room.databaseBuilder(this, MessageDatabase::class.java, "Groups").allowMainThreadQueries().build().dataDao()
+        groupsDao = LocalMessageStore.named("Groups")
 
         id_back.setOnClickListener {
             Constants.setGroupMessage = null
@@ -323,7 +321,7 @@ class GroupChatActivity: AppCompatActivity() {
             jsonObject.lastMessageID = messageID
             groupsDao.update(jsonObject)
         } else {
-            groupsDao.insert(Message(null, id, messageID))
+            groupsDao.insert(LocalMessage(null, id, messageID))
         }
     }
 
