@@ -57,13 +57,9 @@ class RegisterActivity: AppCompatActivity() {
 
     var code = "1"
 
-    // Same two-step OTP pattern as LoginActivity: tap 1 sends the code, tap 2 (same
-    // button, same text field reused) verifies it and then creates the profile row.
     // Avatar upload is intentionally NOT wired to Supabase Storage — it wasn't part of
     // the requested SupabaseData surface for this pass, so the photo the user picks is
     // shown locally but not persisted (avatar_url stays null). See final report.
-    var otpSent = false
-    var otpPhone = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,26 +134,22 @@ class RegisterActivity: AppCompatActivity() {
         }
 
         id_register.setOnClickListener {
-            if (!otpSent) {
-                if (id_name_edit_text.text.toString().isEmpty() || Constants.getPhone(id_phone_edit_text).isEmpty()
-                    || genderIndex == 0 || birthDate.isEmpty()) {
+            val email = id_email_edit_text.text.toString()
+            val password = id_password_edit_text.text.toString()
+            val confirmPassword = id_confirm_edit_text.text.toString()
 
-                    val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
-                    toast.show()
-                } else {
-                    id_register.visibility = View.GONE
-                    id_register_progress_bar.visibility = View.VISIBLE
-                    sendOtp()
-                }
+            if (id_name_edit_text.text.toString().isEmpty() || email.isEmpty() || Constants.getPhone(id_phone_edit_text).isEmpty()
+                || genderIndex == 0 || birthDate.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+
+                val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
+                toast.show()
+            } else if (password != confirmPassword) {
+                val toast = Toast.makeText(this, "Passwords do not match", Toast.LENGTH_LONG)
+                toast.show()
             } else {
-                if (id_password_edit_text.text.toString().isEmpty()) {
-                    val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
-                    toast.show()
-                } else {
-                    id_register.visibility = View.GONE
-                    id_register_progress_bar.visibility = View.VISIBLE
-                    verifyOtpAndCreateProfile()
-                }
+                id_register.visibility = View.GONE
+                id_register_progress_bar.visibility = View.VISIBLE
+                register()
             }
         }
 
@@ -276,35 +268,17 @@ class RegisterActivity: AppCompatActivity() {
         datePicker.show()
     }
 
-    fun sendOtp() {
-        otpPhone = "+" + code + Constants.getPhone(id_phone_edit_text)
+    fun register() {
+        val email = id_email_edit_text.text.toString()
+        val password = id_password_edit_text.text.toString()
+        val phone = "+" + code + Constants.getPhone(id_phone_edit_text)
 
-        SupabaseAuth.sendPhoneOtp(this, otpPhone, onSuccess = {
-            otpSent = true
-            id_password_edit_text.setText("")
-            id_password_edit_text.hint = "Enter the code we sent you"
-            id_register.visibility = View.VISIBLE
-            id_register_progress_bar.visibility = View.GONE
-
-            val toast = Toast.makeText(this, "Code sent to $otpPhone", Toast.LENGTH_LONG)
-            toast.show()
-        }, onError = { message ->
-            id_register.visibility = View.VISIBLE
-            id_register_progress_bar.visibility = View.GONE
-
-            val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
-            toast.show()
-        })
-    }
-
-    fun verifyOtpAndCreateProfile() {
-        val otpCode = id_password_edit_text.text.toString()
-
-        SupabaseAuth.verifyPhoneOtp(this, otpPhone, otpCode, onSuccess = { _, userId ->
+        SupabaseAuth.signUpEmailPassword(this, email, password, onSuccess = { _, userId ->
             val fields = JSONObject()
             fields.put("id", userId)
             fields.put("display_name", id_name_edit_text.text.toString())
-            fields.put("phone", otpPhone)
+            fields.put("email", email)
+            fields.put("phone", phone)
             fields.put("gender", getGender())
             fields.put("date_of_birth", birthDate)
 
