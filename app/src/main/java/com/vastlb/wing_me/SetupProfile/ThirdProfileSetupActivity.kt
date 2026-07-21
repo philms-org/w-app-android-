@@ -10,15 +10,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import com.vastlb.wing_me.Adapters.LookingForAdapter
 import com.vastlb.wing_me.Classes.Constants
-import com.vastlb.wing_me.Classes.Singleton
 import com.vastlb.wing_me.Main.MainActivity
 import com.vastlb.wing_me.R
+import com.vastlb.wing_me.Supabase.SupabaseAuth
+import com.vastlb.wing_me.Supabase.SupabaseData
 import kotlinx.android.synthetic.main.activity_profile_setup_third.*
-import org.json.JSONException
 import org.json.JSONObject
 
 class ThirdProfileSetupActivity: AppCompatActivity() {
@@ -134,67 +132,40 @@ class ThirdProfileSetupActivity: AppCompatActivity() {
 
     fun send() {
         val array = Constants.getLookingForArray(getProgress(datingID), getProgress(socialisingID), getProgress(networkingID))
+        val userId = SupabaseAuth.getUserId(this)
 
-        val preferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "set_up_profile.php"
-
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    sendSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(this, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                sendError()
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                params["height"] = height
-                params["relationship"] = relationship
-                params["dating_Id"] = array[0].progress.toString()
-                params["socialising_Id"] = array[1].progress.toString()
-                params["networking_Id"] = array[2].progress.toString()
-                params["nationality"] = nationality
-                params["city"] = city
-                params["drink"] = drink
-                params["activity"] = activity
-                params["profession"] = profession
-                return params
-            }
+        if (userId == null) {
+            sendError("Not signed in")
+            return
         }
-        Singleton.getInstance(this).addToRequestQueue(request)
+        val fields = JSONObject()
+        fields.put("id", userId)
+        if (height.isNotEmpty()) fields.put("height", height.toDoubleOrNull())
+        if (relationship.isNotEmpty()) fields.put("relationship", relationship)
+        fields.put("dating_id", array[0].progress)
+        fields.put("socialising_id", array[1].progress)
+        fields.put("networking_id", array[2].progress)
+        if (nationality.isNotEmpty()) fields.put("nationality", nationality)
+        if (city.isNotEmpty()) fields.put("city", city)
+
+        SupabaseData.upsertProfile(this, fields, onSuccess = {
+            sendSuccess()
+        }, onError = { message ->
+            sendError(message)
+        })
     }
 
-    fun sendError() {
-        println("Error2")
-        send()
+    fun sendError(message: String) {
+        val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+        toast.show()
+        id_back.visibility = View.VISIBLE
+        id_progress_bar.visibility = View.GONE
     }
 
-    fun sendSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        if (error == "0") {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
-        } else {
-            val message = json.getString("message")
-            val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
-            toast.show()
-        }
+    fun sendSuccess() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
         id_back.visibility = View.VISIBLE
         id_progress_bar.visibility = View.GONE
     }
