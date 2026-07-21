@@ -20,8 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import com.vastlb.wing_me.Adapters.GroupsAdapter
 import com.vastlb.wing_me.Adapters.MessagesAdapter
 import com.vastlb.wing_me.Classes.Constants
@@ -32,6 +30,7 @@ import com.vastlb.wing_me.DataClasses.GroupClass
 import com.vastlb.wing_me.DataClasses.MessageClass
 import com.vastlb.wing_me.Groups.GroupChatActivity
 import com.vastlb.wing_me.R
+import com.vastlb.wing_me.Supabase.SupabaseData
 import com.vastlb.wing_me.User.ChatActivity
 import org.json.JSONException
 import org.json.JSONObject
@@ -304,82 +303,48 @@ class MessagesFragment: Fragment() {
     }
 
     fun getMessages() {
-        val preferences = requireContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "get_inboxs.php"
-
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener {
-                response ->
-
-                try {
-                    messagesSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(context, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                messagesConnectionError()
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                return params
-            }
-        }
-        Singleton.getInstance(requireContext()).addToRequestQueue(request)
-    }
-
-    fun messagesConnectionError() {
-        println("Error2")
-        getMessages()
-    }
-
-    fun messagesSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        if (error == "0") {
-            messagesArray.clear()
-
-            val message = json.getJSONArray("message")
-
-            for (index in 0..(message.length() - 1)) {
-                val jsonObject = message[index] as JSONObject
-                val user = jsonObject.getJSONObject("user")
-                val image = user.getString("image")
-                val userID = user.getString("Id")
-                val name = user.getString("name")
-                val gender = user.getString("gender")
-                val blocked = user.getString("blocked")
-                val text = jsonObject.getString("text")
-                val message_at = jsonObject.getString("message_at")
-                val messageID = jsonObject.getString("Id")
-                val is_master_account = user.getString("is_master_account")
-
-                var time = ""
-
-                if (!message_at.isEmpty()) {
-                    time = getTime(message_at)
-                }
-                val badge = checkMessageBadge(userID, messageID)
-                val isBlocked = (blocked == "1")
-                val isMaster = (is_master_account == "1")
-
-                messagesArray.add(MessageClass(image, userID, name, messageID, text, time, gender, isBlocked, badge, isMaster))
-            }
-        } else {
-            val message = json.getString("message")
+        SupabaseData.fetchConversations(requireContext(), onSuccess = { conversations ->
+            messagesSuccess(conversations)
+        }, onError = { message ->
             val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
             toast.show()
+            messagesRefreshLayout.isRefreshing = false
+            progressBar.visibility = View.GONE
+        })
+    }
+
+    // Conversation summaries from SupabaseData.fetchConversations, each shaped:
+    // { id, is_group, name, last_message, last_message_at, my_status,
+    //   other_user_id, other_display_name, other_avatar_url }. Group conversations are
+    // out of scope for this pass (see Groups.* — untouched) so only 1:1 conversations
+    // are rendered here.
+    fun messagesSuccess(conversations: org.json.JSONArray) {
+        messagesArray.clear()
+
+        for (index in 0 until conversations.length()) {
+            val jsonObject = conversations.getJSONObject(index)
+            val isGroup = jsonObject.optBoolean("is_group", false)
+
+            if (isGroup) {
+                continue
+            }
+            val id = jsonObject.optString("other_user_id", jsonObject.getString("id"))
+            val name = jsonObject.optString("other_display_name", "")
+            val image = jsonObject.optString("other_avatar_url", "")
+            val text = jsonObject.optString("last_message", "")
+            val messageAt = jsonObject.optString("last_message_at", "")
+
+            var time = ""
+            if (messageAt.isNotEmpty()) {
+                try {
+                    time = getTime(toLegacyDateFormat(messageAt))
+                } catch (e: Exception) {
+                    time = ""
+                }
+            }
+            val badge = checkMessageBadge(id, jsonObject.getString("id"))
+
+            messagesArray.add(MessageClass(image, id, name, jsonObject.getString("id"), text, time, "", false, badge, false))
         }
         if (groupsArray.isEmpty() && messagesArray.isEmpty()) {
             noMessagesLayout.visibility = View.VISIBLE
@@ -471,6 +436,14 @@ class MessagesFragment: Fragment() {
         groupsRefreshLayout.isRefreshing = false
         groupsAdapter.notifyDataSetChanged()
         progressBar.visibility = View.GONE
+    }
+
+    // Supabase timestamps come back as ISO 8601 ("2026-07-20T00:38:08.466+00:00");
+    // getTime() below expects the legacy PHP backend's "yyyy-MM-dd HH:mm:ss" shape.
+    fun toLegacyDateFormat(iso: String): String {
+        val datePart = iso.substringBefore("T")
+        val timePart = iso.substringAfter("T").substringBefore(".").substringBefore("+")
+        return "$datePart $timePart"
     }
 
     fun getTime(date: String): String {

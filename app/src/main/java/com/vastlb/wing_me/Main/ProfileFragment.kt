@@ -12,19 +12,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import com.squareup.picasso.Picasso
 import com.vastlb.wing_me.Classes.BackgroundService
 import com.vastlb.wing_me.Classes.Constants
-import com.vastlb.wing_me.Classes.Singleton
 import com.vastlb.wing_me.Profile.EditProfileActivity
 import com.vastlb.wing_me.R
 import com.vastlb.wing_me.Settings.NotificationsActivity
 import com.vastlb.wing_me.Settings.SettingsActivity
 import com.vastlb.wing_me.SetupProfile.SecondProfileSetupActivity
 import com.vastlb.wing_me.SetupProfile.ThirdProfileSetupActivity
-import org.json.JSONException
+import com.vastlb.wing_me.Supabase.SupabaseAuth
+import com.vastlb.wing_me.Supabase.SupabaseData
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -194,167 +192,145 @@ class ProfileFragment: Fragment() {
     }
 
     fun request() {
-        val preferences = requireContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "get_info.php"
+        val userId = SupabaseAuth.getUserId(requireContext())
 
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    requestSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(context, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                connectionError()
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                return params
-            }
+        if (userId == null) {
+            Constants.deleteUserData(requireContext())
+            close()
+            return
         }
-        Singleton.getInstance(requireContext()).addToRequestQueue(request)
+        SupabaseData.fetchProfile(requireContext(), userId, onSuccess = { profile ->
+            if (profile != null) {
+                requestSuccess(profile)
+            } else {
+                val toast = Toast.makeText(context, "Profile not found", Toast.LENGTH_LONG)
+                toast.show()
+            }
+            progressBar.visibility = View.GONE
+        }, onError = { message ->
+            val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
+            toast.show()
+            progressBar.visibility = View.GONE
+        })
     }
 
-    fun connectionError() {
-        println("Error2")
-        request()
-    }
-
+    // NOTE: the live `profiles` table does not yet have `fave_drink`, `friday_night`,
+    // `profession`, or `email` columns (verified 2026-07-20 against the real project —
+    // see SupabaseData.kt), so `drink`/`activity`/`profession`/`email` always render as
+    // "---" here until those columns exist. `gender` and `date_of_birth` DO exist and
+    // are used for the gender/age rows.
     @SuppressLint("SetTextI18n")
-    fun requestSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
+    fun requestSuccess(message: JSONObject) {
+        imageURL = message.optString("avatar_url", "")
+        if (imageURL.isNotEmpty()) {
+            Picasso.get().load(imageURL).into(imageView)
+        }
 
-        if (error == "0") {
-            val message = json.getJSONObject("message")
-            imageURL = message.getString("image")
-            Picasso.get().load(Constants.url + imageURL).into(imageView)
+        name = message.optString("display_name", "")
+        phone = message.optString("phone", "")
+        email = ""
 
-            name = message.getString("name")
-            phone = message.getString("phone")
-            email = message.getString("email")
+        datingID = optIntAsString(message, "dating_id")
+        socialisingID = optIntAsString(message, "socialising_id")
+        networkingID = optIntAsString(message, "networking_id")
 
-            datingID = message.getString("dating_Id")
-            socialisingID = message.getString("socialising_Id")
-            networkingID = message.getString("networking_Id")
+        city = message.optString("city", "")
+        drink = ""
+        activity = ""
+        profession = ""
 
-            city = message.getString("city")
-            drink = message.getString("drink")
-            activity = message.getString("activity")
-            profession = message.getString("profession")
+        nameTextView.setText(name)
+        phoneTextView.setText(phone)
+        emailTextView.setText(if (email.isEmpty()) "---" else email)
 
-            nameTextView.setText(name)
-            phoneTextView.setText(phone)
-            emailTextView.setText(email)
+        cityTextView.setText(if (city.isEmpty()) "---" else city)
+        drinkTextView.setText("---")
+        fridayActivityTextView.setText("---")
+        professionTextView.setText("---")
 
-            if (city.isEmpty()) {
-                cityTextView.setText("---")
-            } else {
-                cityTextView.setText(city)
+        nationality = message.optString("nationality", "")
+
+        if (nationality.isEmpty()) {
+            nationalityTextView.setText("---")
+        } else {
+            val flags = Constants.getFlags()
+            val jsonObject = flags.firstOrNull { jsonObject ->
+                jsonObject.id == nationality
             }
-            if (drink.isEmpty()) {
-                drinkTextView.setText("---")
-            } else {
-                drinkTextView.setText(drink)
-            }
-            if (activity.isEmpty()) {
-                fridayActivityTextView.setText("---")
-            } else {
-                fridayActivityTextView.setText(activity)
-            }
-            if (profession.isEmpty()) {
-                professionTextView.setText("---")
-            } else {
-                professionTextView.setText(profession)
-            }
-
-            nationality = message.getString("nationality")
-
-            if (nationality.isEmpty()) {
-                nationalityTextView.setText("---")
-            } else {
-                val flags = Constants.getFlags()
-                val jsonObject = flags.first { jsonObject ->
-                    jsonObject.id == nationality
-                }
+            if (jsonObject != null) {
                 val locale = Locale("en_US", jsonObject.id)
                 val name = locale.getDisplayCountry()
                 nationalityTextView.setText("${name} ${jsonObject.emoji}")
-            }
-
-            birthDate = message.getString("birth")
-            val age = getAge(birthDate)
-            ageTextView.setText(age)
-
-            agePrivacy = message.getString("age_privacy")
-
-            gender = message.getString("gender")
-            val genderString = getGender(gender)
-            genderTextView.setText(genderString)
-
-            height = message.getString("height")
-
-            if (height.isEmpty()) {
-                heightTextView.setText("---")
             } else {
-                heightTextView.setText("${height}m")
+                nationalityTextView.setText("---")
             }
-
-            relationship = message.getString("relationship")
-
-            if (relationship.isEmpty()) {
-                relationshipTextView.setText("---")
-            } else {
-                val array = Constants.getRelationships(0)
-                val jsonObject = array.first { jsonObject ->
-                    jsonObject.id == relationship
-                }
-                relationshipTextView.setText(jsonObject.title)
-            }
-
-            Constants.datingID = message.getString("dating_Id")
-            Constants.socialisingID = message.getString("socialising_Id")
-            Constants.networkingID = message.getString("networking_Id")
-            val lookingFor = Constants.getLookingFor(Constants.datingID, Constants.socialisingID, Constants.networkingID)
-
-            if (lookingFor.isEmpty()) {
-                lookingForTextView.setText("---")
-            } else {
-                lookingForTextView.setText(lookingFor)
-            }
-
-            if (gender == "F") {
-                editProfileLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_pink)
-                settingsLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_pink)
-            } else {
-                editProfileLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_blue)
-                settingsLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_blue)
-            }
-            scrollView.visibility = View.VISIBLE
-
-            if (city.isEmpty() || nationality.isEmpty() || height.isEmpty() || drink.isEmpty() || activity.isEmpty()) {
-                setup()
-            }
-        } else if (error == "6") {
-            Constants.deleteUserData(requireContext())
-            close()
-        } else {
-            val message = json.getString("message")
-            val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
-            toast.show()
         }
-        progressBar.visibility = View.GONE
+
+        birthDate = message.optString("date_of_birth", "")
+
+        if (birthDate.isEmpty()) {
+            ageTextView.setText("---")
+        } else {
+            ageTextView.setText(getAge(birthDate))
+        }
+        agePrivacy = ""
+
+        gender = message.optString("gender", "")
+        genderTextView.setText(getGender(gender))
+
+        height = optDoubleAsString(message, "height")
+
+        if (height.isEmpty()) {
+            heightTextView.setText("---")
+        } else {
+            heightTextView.setText("${height}m")
+        }
+
+        relationship = message.optString("relationship", "")
+
+        if (relationship.isEmpty()) {
+            relationshipTextView.setText("---")
+        } else {
+            val array = Constants.getRelationships(0)
+            val jsonObject = array.firstOrNull { jsonObject ->
+                jsonObject.id == relationship
+            }
+            relationshipTextView.setText(jsonObject?.title ?: "---")
+        }
+
+        Constants.datingID = datingID
+        Constants.socialisingID = socialisingID
+        Constants.networkingID = networkingID
+        val lookingFor = Constants.getLookingFor(Constants.datingID, Constants.socialisingID, Constants.networkingID)
+
+        if (lookingFor.isEmpty()) {
+            lookingForTextView.setText("---")
+        } else {
+            lookingForTextView.setText(lookingFor)
+        }
+
+        if (gender == "F") {
+            editProfileLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_pink)
+            settingsLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_pink)
+        } else {
+            editProfileLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_blue)
+            settingsLayout.setBackgroundResource(R.drawable.view_drawable_profile_button_blue)
+        }
+        scrollView.visibility = View.VISIBLE
+
+        if (city.isEmpty() || nationality.isEmpty() || height.isEmpty()) {
+            setup()
+        }
+    }
+
+    fun optIntAsString(json: JSONObject, key: String): String {
+        if (json.isNull(key) || !json.has(key)) return ""
+        return json.optInt(key).toString()
+    }
+
+    fun optDoubleAsString(json: JSONObject, key: String): String {
+        if (json.isNull(key) || !json.has(key)) return ""
+        return json.optDouble(key).toString()
     }
 
     fun getGender(gender: String): String {
@@ -389,41 +365,9 @@ class ProfileFragment: Fragment() {
     }
 
     fun logout() {
-        val preferences = requireContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "logout.php"
-
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    logoutSuccess()
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(context, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                logoutError()
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["firebase_token"] = Constants.firebaseToken
-                return params
-            }
+        SupabaseAuth.signOut(requireContext()) {
+            logoutSuccess()
         }
-        Singleton.getInstance(requireContext()).addToRequestQueue(request)
-    }
-
-    fun logoutError() {
-        println("Error2")
-        logout()
     }
 
     fun logoutSuccess() {

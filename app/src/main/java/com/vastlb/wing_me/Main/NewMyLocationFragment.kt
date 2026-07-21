@@ -30,9 +30,11 @@ import com.vastlb.wing_me.DataClasses.LocationClass
 import com.vastlb.wing_me.DataClasses.UserClass
 import com.vastlb.wing_me.Groups.RepliesActivity
 import com.vastlb.wing_me.R
+import com.vastlb.wing_me.Supabase.SupabaseData
 import com.vastlb.wing_me.User.ChatActivity
 import com.vastlb.wing_me.User.SocialSettingsActivity
 import com.vastlb.wing_me.User.UserProfileActivity
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -266,6 +268,14 @@ class NewMyLocationFragment: Fragment() {
         noLocationLayout.visibility = View.GONE
         setTimer()
         reload()
+
+        // location_checkins insert (core Supabase check-in). Events (locationID
+        // prefixed "Event_") don't map to a real `locations` row, so they're skipped —
+        // the event flow itself is left on the legacy backend (see getEvent()/out of
+        // scope note below).
+        if (!jsonObject.id.contains("Event") && context != null) {
+            SupabaseData.checkIn(requireContext(), jsonObject.id, onSuccess = {}, onError = { })
+        }
     }
 
     fun setUI(index: Int) {
@@ -377,237 +387,87 @@ class NewMyLocationFragment: Fragment() {
         }
     }
 
+    // NOTE: banners and comments are explicitly out of scope for this Supabase pass
+    // (see task instructions — comments/likes/replies untouched) — this only loads the
+    // core venue details (name/city/description/image) from the `locations` table.
+    // bannersArray/commentsArray are simply left empty rather than wired to the dead
+    // legacy endpoints.
     fun getLocation() {
         val context = context ?: return
 
-        val preferences = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "get_location.php"
-
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener {
-                response ->
-
-                try {
-                    getLocationSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(context, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                getLocationError()
+        SupabaseData.fetchVenue(context, locationID, onSuccess = { venue ->
+            if (venue != null) {
+                getLocationSuccess(venue)
             }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                params["location_Id"] = locationID
-                return params
-            }
-        }
-        Singleton.getInstance(requireContext()).addToRequestQueue(request)
-    }
-
-    fun getLocationError() {
-        println("Error2")
-        getLocation()
-    }
-
-    fun getLocationSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        Log.e("Response", json.toString(4))
-
-        if (error == "0") {
-            val message = json.getJSONObject("message")
-            val banner = message.getJSONArray("banner")
-            val comment = message.getJSONArray("comment")
-            val image = message.getString("image")
-            val name = message.getString("name")
-            val name_city = message.getString("name_city")
-            val default_message = message.getString("default_message")
-
-            bannersArray.clear()
-
-            for (index in 0..(banner.length() - 1)) {
-                val jsonObject = banner[index] as JSONObject
-                val image = jsonObject.getString("image")
-                val title = jsonObject.getString("title")
-                val url = jsonObject.getString("url")
-                val blurred = jsonObject.getString("blurred")
-
-                bannersArray.add(LocationBannerClass(image, title, url, blurred == "1"))
-
-                if (index == bannerIndex) {
-                    setUI(index)
-                }
-            }
-            bannerAdapter.notifyDataSetChanged()
-
-            Picasso.get().load(Constants.url + image).into(imageView)
-
-            nameTextView.setText(name)
-            cityTextView.setText(name_city)
-            detailsTextView.setText(default_message)
-
-            commentsArray.clear()
-
-            for (index in 0..(comment.length() - 1)) {
-                val jsonObject = comment[index] as JSONObject
-                val image = jsonObject.getString("image")
-                val badges_image = jsonObject.getString("badges_image")
-                val Id = jsonObject.getString("Id")
-                val user_Id = jsonObject.getString("user_Id")
-                val name = jsonObject.getString("name")
-                val badges_title = jsonObject.getString("badges_title")
-                val age = jsonObject.getString("age")
-                val gender = jsonObject.getString("gender")
-                val nationality = jsonObject.getString("nationality")
-                val city = jsonObject.getString("city")
-                val comment = jsonObject.getString("comment")
-                val number_of_like = jsonObject.getInt("number_of_like")
-                val is_my_comment = jsonObject.getBoolean("is_my_comment")
-                val is_liked = jsonObject.getBoolean("is_liked")
-
-                commentsArray.add(CommentClass(image, Id, user_Id, name, badges_image, badges_title, age, gender, nationality, city, comment, number_of_like, is_my_comment, is_liked))
-            }
-            commentsAdapter.notifyDataSetChanged()
-        } else {
-            val message = json.getString("message")
+            progressBar.visibility = View.GONE
+        }, onError = { message ->
             val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
             toast.show()
-        }
-        progressBar.visibility = View.GONE
+            progressBar.visibility = View.GONE
+        })
     }
 
+    fun getLocationSuccess(venue: JSONObject) {
+        val image = venue.optString("banner_image", "")
+        val name = venue.optString("name", "")
+        val city = venue.optString("city", "")
+        val description = venue.optString("description", "")
+
+        bannersArray.clear()
+        bannerAdapter.notifyDataSetChanged()
+        bannerTextLayout.visibility = View.GONE
+
+        if (image.isNotEmpty()) {
+            Picasso.get().load(image).into(imageView)
+        }
+
+        nameTextView.setText(name)
+        cityTextView.setText(city)
+        detailsTextView.setText(description)
+
+        commentsArray.clear()
+        commentsAdapter.notifyDataSetChanged()
+    }
+
+    // location_checkins joined with profiles (`?select=*,profiles(*)&location_id=eq.<id>
+    // &checked_out_at=is.null`) — who's currently checked in, per the shared schema.
     fun getUsers() {
         val context = context ?: return
 
-        val preferences = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "get_users.php"
-
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    usersSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(context, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                usersConnectionError()
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                params["location_Id"] = locationID
-                return params
-            }
-        }
-        Singleton.getInstance(requireContext()).addToRequestQueue(request)
-    }
-
-    fun usersConnectionError() {
-        println("Error2")
-        getUsers()
-    }
-
-    fun usersSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        if (error == "0") {
-            usersArray.clear()
-
-            val message = json.getJSONArray("message")
-
-            for (index in 0..(message.length() - 1)) {
-                val jsonObject = message[index] as JSONObject
-                val image = jsonObject.getString("image")
-                val Id = jsonObject.getString("Id")
-                val name = jsonObject.getString("name")
-                val gender = jsonObject.getString("gender")
-                val age = jsonObject.getString("age")
-                val city = jsonObject.getString("city")
-                val nationality = jsonObject.getString("nationality")
-                val is_master_account = jsonObject.getString("is_master_account")
-
-                var details = ""
-
-                if (age.isEmpty()) {
-                    if (city.isEmpty()) {
-                        if (nationality.isEmpty()) {
-                            details = ""
-                        } else {
-                            val flags = Constants.getFlags()
-                            val jsonObject = flags.first {
-                                    jsonObject ->
-                                jsonObject.id == nationality
-                            }
-                            details = jsonObject.emoji
-                        }
-                    } else {
-                        if (nationality.isEmpty()) {
-                            details = city
-                        } else {
-                            val flags = Constants.getFlags()
-                            val jsonObject = flags.first {
-                                    jsonObject ->
-                                jsonObject.id == nationality
-                            }
-                            details = "${city} ${jsonObject.emoji}"
-                        }
-                    }
-                } else {
-                    if (city.isEmpty()) {
-                        if (nationality.isEmpty()) {
-                            details = "Age: ${age}"
-                        } else {
-                            val flags = Constants.getFlags()
-                            val jsonObject = flags.first {
-                                    jsonObject ->
-                                jsonObject.id == nationality
-                            }
-                            details = "Age: ${age} ${jsonObject.emoji}"
-                        }
-                    } else {
-                        if (nationality.isEmpty()) {
-                            details = "Age: ${age}, ${city}"
-                        } else {
-                            val flags = Constants.getFlags()
-                            val jsonObject = flags.first {
-                                    jsonObject ->
-                                jsonObject.id == nationality
-                            }
-                            details = "Age: ${age}, ${city} ${jsonObject.emoji}"
-                        }
-                    }
-                }
-                val isMaster = (is_master_account == "1")
-
-                usersArray.add(UserClass(image, Id, name, details, gender, isMaster))
-            }
-        } else {
-            val message = json.getString("message")
+        SupabaseData.fetchPresence(context, locationID, onSuccess = { presence ->
+            usersSuccess(presence)
+        }, onError = { message ->
             val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
             toast.show()
+            progressBar.visibility = View.GONE
+        })
+    }
+
+    fun usersSuccess(presence: JSONArray) {
+        usersArray.clear()
+
+        for (index in 0 until presence.length()) {
+            val row = presence.getJSONObject(index)
+            val profile = row.optJSONObject("profiles") ?: continue
+
+            val id = row.optString("user_id", "")
+            val image = profile.optString("avatar_url", "")
+            val name = profile.optString("display_name", "")
+            val gender = profile.optString("gender", "")
+            val city = profile.optString("city", "")
+            val nationality = profile.optString("nationality", "")
+
+            var details = city
+
+            if (nationality.isNotEmpty()) {
+                val flags = Constants.getFlags()
+                val flag = flags.firstOrNull { flagClass -> flagClass.id == nationality }
+                if (flag != null) {
+                    details = if (city.isEmpty()) flag.emoji else "$city ${flag.emoji}"
+                }
+            }
+
+            usersArray.add(UserClass(image, id, name, details, gender, false))
         }
         usersAdapter.notifyDataSetChanged()
         progressBar.visibility = View.GONE
@@ -710,60 +570,12 @@ class NewMyLocationFragment: Fragment() {
     fun wingOff() {
         val context = context ?: return
 
-        val preferences = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "wing_off.php"
-
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    wingOffSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(context, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                wingOffError()
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-
-                if (locationID.contains("Event")) {
-                    params["event_Id"] = locationID.replace("Event_", "")
-                } else {
-                    params["location_Id"] = locationID
-                }
-                return params
-            }
+        // location_checkins check-out (core Supabase loop). Events don't have a real
+        // `locations` row to check out of, so they're skipped here — see wingMe().
+        if (locationID.contains("Event")) {
+            return
         }
-        Singleton.getInstance(requireContext()).addToRequestQueue(request)
-    }
-
-    fun wingOffError() {
-        println("Error2")
-        wingOff()
-    }
-
-    fun wingOffSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        if (error == "0") {
-
-        } else {
-            val message = json.getString("message")
-            val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
-            toast.show()
-        }
+        SupabaseData.checkOut(context, locationID, onSuccess = {}, onError = { })
     }
 
     fun addLike(id: String) {

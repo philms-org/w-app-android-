@@ -26,8 +26,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -39,13 +37,12 @@ import com.vastlb.wing_me.Adapters.CategoriesAdapter
 import com.vastlb.wing_me.Adapters.LocationsAdapter
 import com.vastlb.wing_me.Classes.BackgroundService
 import com.vastlb.wing_me.Classes.Constants
-import com.vastlb.wing_me.Classes.Singleton
 import com.vastlb.wing_me.DataClasses.CategoryClass
 import com.vastlb.wing_me.DataClasses.LocationClass
 import com.vastlb.wing_me.R
+import com.vastlb.wing_me.Supabase.SupabaseData
 import com.vastlb.wing_me.User.SingleLocationActivity
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 
 class MapFragment: Fragment(), OnMapReadyCallback {
@@ -320,76 +317,30 @@ class MapFragment: Fragment(), OnMapReadyCallback {
         locationsAdapter.notifyDataSetChanged()
     }
 
+    // The `locations` table (shared Supabase schema) has no category grouping, unlike
+    // the old PHP backend's get_location_category.php — every venue is loaded into a
+    // single "All" category, which is the only category the existing UI actually needs
+    // to keep the map/list/geofencing logic below working unmodified.
     fun request() {
-        val preferences = requireContext().getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-        val token = preferences.getString("Token", "")
-        val url = Constants.url + "get_location_category.php"
-
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    requestSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(context, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                connectionError()
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["Authorization"] = token!!
-                return headers
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                return params
-            }
-        }
-        Singleton.getInstance(requireContext()).addToRequestQueue(request)
-    }
-
-    fun connectionError() {
-        println("Error2")
-        request()
-    }
-
-    fun requestSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        if (error == "0") {
-            val message = json.getJSONArray("message")
-
-            var allCount = 0
-
-            for (index in 0..(message.length() - 1)) {
-                val jsonObject = message[index] as JSONObject
-                val Id = jsonObject.getString("Id")
-                val name = jsonObject.getString("name")
-                val location = jsonObject.getJSONArray("location")
-                val array = getLocationsArray(location)
-
-                var count = 0
-
-                for (index in 0..(array.size - 1)) {
-                    val jsonObject = array[index]
-                    count += jsonObject.count
-                    allCount += jsonObject.count
-                }
-                categoriesArray.add(CategoryClass(Id, name, count, array, false))
-            }
-            setLocations(allLocationsArray)
-            categoriesArray.add(0, CategoryClass("", "All", allCount, allLocationsArray, true))
-        } else {
-            val message = json.getString("message")
+        SupabaseData.fetchVenues(requireContext(), onSuccess = { venues ->
+            requestSuccess(venues)
+        }, onError = { message ->
             val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
             toast.show()
+            categoriesAdapter.notifyDataSetChanged()
+            progressBar.visibility = View.GONE
+        })
+    }
+
+    fun requestSuccess(venues: JSONArray) {
+        val array = getLocationsArray(venues)
+        var allCount = 0
+
+        for (index in 0 until array.size) {
+            allCount += array[index].count
         }
+        setLocations(allLocationsArray)
+        categoriesArray.add(0, CategoryClass("", "All", allCount, allLocationsArray, true))
         categoriesAdapter.notifyDataSetChanged()
         progressBar.visibility = View.GONE
     }
@@ -397,18 +348,17 @@ class MapFragment: Fragment(), OnMapReadyCallback {
     fun getLocationsArray(array: JSONArray): ArrayList<LocationClass> {
         val locationsArray = ArrayList<LocationClass>()
 
-        for (index in 0..(array.length() - 1)) {
-            val jsonObject = array[index] as JSONObject
-            val image = jsonObject.getString("image")
-            val Id = jsonObject.getString("Id")
-            val name = jsonObject.getString("name")
-            val description = jsonObject.getString("description")
-            val google_latitude = jsonObject.getDouble("google_latitude")
-            val google_longitude = jsonObject.getDouble("google_longitude")
-            val radius = jsonObject.getDouble("radius")
-            val user_count = jsonObject.getInt("user_count")
+        for (index in 0 until array.length()) {
+            val jsonObject = array.getJSONObject(index)
+            val image = jsonObject.optString("banner_image", "")
+            val id = jsonObject.getString("id")
+            val name = jsonObject.optString("name", "")
+            val description = jsonObject.optString("description", "")
+            val latitude = jsonObject.optDouble("lat", 0.0)
+            val longitude = jsonObject.optDouble("lng", 0.0)
+            val radius = jsonObject.optInt("geofence_radius_meters", 100).toDouble()
 
-            val locationClass = LocationClass(image, Id, name, description, google_latitude, google_longitude, radius, user_count)
+            val locationClass = LocationClass(image, id, name, description, latitude, longitude, radius, 0)
             allLocationsArray.add(locationClass)
             locationsArray.add(locationClass)
         }
