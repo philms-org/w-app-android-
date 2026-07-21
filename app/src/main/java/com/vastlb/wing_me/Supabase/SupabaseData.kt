@@ -116,6 +116,16 @@ object SupabaseData {
         )
     }
 
+    // ---- Banners (Home tab carousel) ----
+
+    fun fetchBanners(context: Context, onSuccess: (JSONArray) -> Unit, onError: (String) -> Unit) {
+        arrayRequest(
+            context, Request.Method.GET,
+            "/banners?select=*&is_active=eq.true&order=display_order",
+            onSuccess = onSuccess, onError = onError
+        )
+    }
+
     // ---- Check-in / presence (location_checkins) ----
 
     fun checkIn(context: Context, locationId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {

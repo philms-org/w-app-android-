@@ -167,15 +167,18 @@ class HomeFragment: Fragment() {
     }
 
     // The old get_home.php endpoint curated 4 different sections (banner/events/
-    // new/most-visited/last-visited) server-side; the shared `locations` table has no
-    // equivalent curation columns yet. To keep this screen functional rather than
-    // blank, every venue from `locations` is shown in the "new added" section (the
-    // most direct one-to-one mapping); banner/events/most-visited/last-visited stay
-    // empty and their sections stay hidden via the existing isEmpty() visibility logic
-    // below — no dead legacy calls are made.
+    // new/most-visited/last-visited) server-side. banner now has a real Supabase
+    // table (banners, migration 015); events/most-visited/last-visited still have
+    // no equivalent, so every venue from `locations` is shown in the "new added"
+    // section as before and those three sections stay hidden.
     fun request() {
         SupabaseData.fetchVenues(requireContext(), onSuccess = { venues ->
-            requestSuccess(venues)
+            SupabaseData.fetchBanners(requireContext(), onSuccess = { banners ->
+                requestSuccess(venues, banners)
+            }, onError = {
+                // Banner load failure shouldn't block the rest of the screen.
+                requestSuccess(venues, JSONArray())
+            })
         }, onError = { message ->
             val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
             toast.show()
@@ -184,8 +187,18 @@ class HomeFragment: Fragment() {
         })
     }
 
-    fun requestSuccess(venues: JSONArray) {
-        bannerLayout.visibility = View.GONE
+    fun requestSuccess(venues: JSONArray, banners: JSONArray) {
+        bannerArray.clear()
+        for (index in 0 until banners.length()) {
+            val jsonObject = banners.getJSONObject(index)
+            val imageURL = jsonObject.optString("image_url", "")
+            val locationID = jsonObject.optString("location_id", "")
+            val link = jsonObject.optString("link", "")
+            bannerArray.add(BannerClass(imageURL, locationID, link))
+        }
+        bannerAdapter.notifyDataSetChanged()
+        bannerLayout.visibility = if (bannerArray.isEmpty()) View.GONE else View.VISIBLE
+
         eventsLayout.visibility = View.GONE
 
         newAddedArray.clear()
