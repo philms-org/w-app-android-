@@ -167,17 +167,23 @@ class HomeFragment: Fragment() {
     }
 
     // The old get_home.php endpoint curated 4 different sections (banner/events/
-    // new/most-visited/last-visited) server-side. banner now has a real Supabase
-    // table (banners, migration 015); events/most-visited/last-visited still have
-    // no equivalent, so every venue from `locations` is shown in the "new added"
-    // section as before and those three sections stay hidden.
+    // new/most-visited/last-visited) server-side. All four now have real Supabase
+    // sources: banner -> banners table (migration 015), events -> locations where
+    // is_event, most/last visited -> location_checkins aggregated client-side (see
+    // SupabaseData.fetchMostVisited/fetchLastVisited).
     fun request() {
         SupabaseData.fetchVenues(requireContext(), onSuccess = { venues ->
             SupabaseData.fetchBanners(requireContext(), onSuccess = { banners ->
-                requestSuccess(venues, banners)
+                SupabaseData.fetchEvents(requireContext(), onSuccess = { events ->
+                    SupabaseData.fetchMostVisited(requireContext(), onSuccess = { mostVisited ->
+                        SupabaseData.fetchLastVisited(requireContext(), onSuccess = { lastVisited ->
+                            requestSuccess(venues, banners, events, mostVisited, lastVisited)
+                        }, onError = { requestSuccess(venues, banners, events, mostVisited, JSONArray()) })
+                    }, onError = { requestSuccess(venues, banners, events, JSONArray(), JSONArray()) })
+                }, onError = { requestSuccess(venues, banners, JSONArray(), JSONArray(), JSONArray()) })
             }, onError = {
                 // Banner load failure shouldn't block the rest of the screen.
-                requestSuccess(venues, JSONArray())
+                requestSuccess(venues, JSONArray(), JSONArray(), JSONArray(), JSONArray())
             })
         }, onError = { message ->
             val toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
@@ -187,7 +193,7 @@ class HomeFragment: Fragment() {
         })
     }
 
-    fun requestSuccess(venues: JSONArray, banners: JSONArray) {
+    fun requestSuccess(venues: JSONArray, banners: JSONArray, events: JSONArray, mostVisited: JSONArray, lastVisited: JSONArray) {
         bannerArray.clear()
         for (index in 0 until banners.length()) {
             val jsonObject = banners.getJSONObject(index)
@@ -199,7 +205,12 @@ class HomeFragment: Fragment() {
         bannerAdapter.notifyDataSetChanged()
         bannerLayout.visibility = if (bannerArray.isEmpty()) View.GONE else View.VISIBLE
 
-        eventsLayout.visibility = View.GONE
+        eventsArray.clear()
+        for (index in 0 until events.length()) {
+            eventsArray.add(getEvent(events.getJSONObject(index)))
+        }
+        eventsAdapter.notifyDataSetChanged()
+        eventsLayout.visibility = if (eventsArray.isEmpty()) View.GONE else View.VISIBLE
 
         newAddedArray.clear()
 
@@ -214,11 +225,35 @@ class HomeFragment: Fragment() {
         } else {
             newAddedLayout.visibility = View.VISIBLE
         }
-        mostVisitedLayout.visibility = View.GONE
-        lastVisitedLayout.visibility = View.GONE
+
+        mostVisitedArray.clear()
+        for (index in 0 until mostVisited.length()) {
+            mostVisitedArray.add(getLocation(mostVisited.getJSONObject(index)))
+        }
+        mostVisitedAdapter.notifyDataSetChanged()
+        mostVisitedLayout.visibility = if (mostVisitedArray.isEmpty()) View.GONE else View.VISIBLE
+
+        lastVisitedArray.clear()
+        for (index in 0 until lastVisited.length()) {
+            lastVisitedArray.add(getLocation(lastVisited.getJSONObject(index)))
+        }
+        lastVisitedAdapter.notifyDataSetChanged()
+        lastVisitedLayout.visibility = if (lastVisitedArray.isEmpty()) View.GONE else View.VISIBLE
 
         scrollView.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
+    }
+
+    fun getEvent(jsonObject: org.json.JSONObject): EventClass {
+        val image = jsonObject.optString("banner_image", "")
+        val id = jsonObject.getString("id")
+        val title = jsonObject.optString("name", "")
+        val details = jsonObject.optString("description", "")
+        val startDate = jsonObject.optString("event_date", "")
+        val endDate = jsonObject.optString("event_end_date", "")
+        val status = jsonObject.optString("event_status", "")
+
+        return EventClass(image, id, title, details, startDate, endDate, status)
     }
 
     fun getLocation(jsonObject: org.json.JSONObject): HomeLocationClass {

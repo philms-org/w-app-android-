@@ -116,6 +116,70 @@ object SupabaseData {
         )
     }
 
+    // ---- Events (Home tab) ----
+
+    // General upcoming-events list for the Home feed -- distinct from a venue
+    // owner's own events (that's a separate, owner-scoped feature elsewhere).
+    fun fetchEvents(context: Context, onSuccess: (JSONArray) -> Unit, onError: (String) -> Unit) {
+        arrayRequest(
+            context, Request.Method.GET,
+            "/locations?select=*&is_event=eq.true&order=event_date",
+            onSuccess = onSuccess, onError = onError
+        )
+    }
+
+    // ---- Most visited / last visited (Home tab) ----
+
+    // No GROUP BY over REST without a database function, so this fetches recent
+    // check-ins (bounded to 500) and counts per-location client-side. Fine for
+    // this week's testing volume; would need a real aggregate view at scale.
+    fun fetchMostVisited(context: Context, onSuccess: (JSONArray) -> Unit, onError: (String) -> Unit) {
+        arrayRequest(
+            context, Request.Method.GET,
+            "/location_checkins?select=location_id,locations(*)&order=checked_in_at.desc&limit=500",
+            onSuccess = { rows ->
+                val counts = LinkedHashMap<String, Int>()
+                val locationsById = HashMap<String, JSONObject>()
+                for (index in 0 until rows.length()) {
+                    val row = rows.getJSONObject(index)
+                    val locationId = row.optString("location_id", "")
+                    if (locationId.isEmpty()) continue
+                    val location = row.optJSONObject("locations") ?: continue
+                    locationsById[locationId] = location
+                    counts[locationId] = (counts[locationId] ?: 0) + 1
+                }
+                val sorted = counts.entries.sortedByDescending { it.value }.take(10)
+                val result = JSONArray()
+                for (entry in sorted) {
+                    locationsById[entry.key]?.let { result.put(it) }
+                }
+                onSuccess(result)
+            },
+            onError = onError
+        )
+    }
+
+    fun fetchLastVisited(context: Context, onSuccess: (JSONArray) -> Unit, onError: (String) -> Unit) {
+        val uid = currentUserId(context) ?: return onSuccess(JSONArray())
+        arrayRequest(
+            context, Request.Method.GET,
+            "/location_checkins?select=checked_in_at,locations(*)&user_id=eq.${enc(uid)}&order=checked_in_at.desc&limit=10",
+            onSuccess = { rows ->
+                val result = JSONArray()
+                val seen = HashSet<String>()
+                for (index in 0 until rows.length()) {
+                    val row = rows.getJSONObject(index)
+                    val location = row.optJSONObject("locations") ?: continue
+                    val id = location.optString("id", "")
+                    if (id.isEmpty() || !seen.add(id)) continue
+                    result.put(location)
+                }
+                onSuccess(result)
+            },
+            onError = onError
+        )
+    }
+
     // ---- Banners (Home tab carousel) ----
 
     fun fetchBanners(context: Context, onSuccess: (JSONArray) -> Unit, onError: (String) -> Unit) {
