@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wing Me</string>
+    <string name="app_name">The W App</string>
     <string name="language">en</string>
 
     <string name="alert_empty">All fields must be filled to proceed</string>
