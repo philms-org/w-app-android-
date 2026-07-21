@@ -25,17 +25,14 @@ import com.facebook.GraphRequest
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.vastlb.wing_me.Classes.Constants
-import com.vastlb.wing_me.Classes.FileDataPart
-import com.vastlb.wing_me.Classes.Singleton
-import com.vastlb.wing_me.Classes.VolleyFileUploadRequest
 import com.vastlb.wing_me.DataClasses.PickerClass
 import com.vastlb.wing_me.Main.MainActivity
 import com.vastlb.wing_me.Main.PickerFragment
 import com.vastlb.wing_me.R
+import com.vastlb.wing_me.Supabase.SupabaseAuth
+import com.vastlb.wing_me.Supabase.SupabaseData
 import kotlinx.android.synthetic.main.activity_register.*
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -59,6 +56,14 @@ class RegisterActivity: AppCompatActivity() {
     var isOpen = false
 
     var code = "1"
+
+    // Same two-step OTP pattern as LoginActivity: tap 1 sends the code, tap 2 (same
+    // button, same text field reused) verifies it and then creates the profile row.
+    // Avatar upload is intentionally NOT wired to Supabase Storage — it wasn't part of
+    // the requested SupabaseData surface for this pass, so the photo the user picks is
+    // shown locally but not persisted (avatar_url stays null). See final report.
+    var otpSent = false
+    var otpPhone = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,18 +138,26 @@ class RegisterActivity: AppCompatActivity() {
         }
 
         id_register.setOnClickListener {
-            if (id_name_edit_text.text.toString().isEmpty() || id_email_edit_text.text.toString().isEmpty() || Constants.getPhone(id_phone_edit_text).isEmpty()
-                || id_password_edit_text.text.toString().isEmpty() || id_confirm_edit_text.text.toString().isEmpty() || genderIndex == 0 || birthDate.isEmpty() || bitmap == null) {
+            if (!otpSent) {
+                if (id_name_edit_text.text.toString().isEmpty() || Constants.getPhone(id_phone_edit_text).isEmpty()
+                    || genderIndex == 0 || birthDate.isEmpty()) {
 
-                val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
-                toast.show()
-            } else if (id_password_edit_text.text.toString() != id_confirm_edit_text.text.toString()) {
-                val toast = Toast.makeText(this, getString(R.string.alert_both), Toast.LENGTH_LONG)
-                toast.show()
+                    val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
+                    toast.show()
+                } else {
+                    id_register.visibility = View.GONE
+                    id_register_progress_bar.visibility = View.VISIBLE
+                    sendOtp()
+                }
             } else {
-                id_register.visibility = View.GONE
-                id_register_progress_bar.visibility = View.VISIBLE
-                register()
+                if (id_password_edit_text.text.toString().isEmpty()) {
+                    val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
+                    toast.show()
+                } else {
+                    id_register.visibility = View.GONE
+                    id_register_progress_bar.visibility = View.VISIBLE
+                    verifyOtpAndCreateProfile()
+                }
             }
         }
 
@@ -263,76 +276,54 @@ class RegisterActivity: AppCompatActivity() {
         datePicker.show()
     }
 
-    fun register() {
-        val url = Constants.url + "sign_up.php"
-        val uid = Constants.getUID(this)
+    fun sendOtp() {
+        otpPhone = "+" + code + Constants.getPhone(id_phone_edit_text)
 
-        val request = object: VolleyFileUploadRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    registerSuccess(response.data.toString(Charsets.UTF_8))
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(this, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                registerError()
-            }
-        ) {
-            override fun getByteData(): MutableMap<String, FileDataPart> {
-                val params = HashMap<String, FileDataPart>()
-                if (bitmap != null) {
-                    val outputStream = ByteArrayOutputStream()
-                    bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
-                    val byteArray = outputStream.toByteArray()
-                    params["image"] = FileDataPart("image.jpeg", byteArray, "jpeg")
-                }
-                return params
-            }
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                params["name"] = id_name_edit_text.text.toString()
-                params["email"] = id_email_edit_text.text.toString()
-                params["phone"] = code + Constants.getPhone(id_phone_edit_text)
-                params["password"] = id_password_edit_text.text.toString()
-                params["gender"] = getGender()
-                params["birth"] = birthDate
-                params["uid"] = uid
-                return params
-            }
-        }
-        Singleton.getInstance(this).addToRequestQueue(request)
-    }
+        SupabaseAuth.sendPhoneOtp(this, otpPhone, onSuccess = {
+            otpSent = true
+            id_password_edit_text.setText("")
+            id_password_edit_text.hint = "Enter the code we sent you"
+            id_register.visibility = View.VISIBLE
+            id_register_progress_bar.visibility = View.GONE
 
-    fun registerError() {
-        println("Error2")
-        register()
-    }
+            val toast = Toast.makeText(this, "Code sent to $otpPhone", Toast.LENGTH_LONG)
+            toast.show()
+        }, onError = { message ->
+            id_register.visibility = View.VISIBLE
+            id_register_progress_bar.visibility = View.GONE
 
-    fun registerSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        if (error == "0") {
-            val message = json.getJSONObject("message")
-            val token = message.getString("token")
-
-            val preferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-            val editor = preferences.edit()
-            editor.putString("Token", token)
-            editor.apply()
-
-            openMain()
-        } else {
-            val message = json.getString("message")
             val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
             toast.show()
-        }
-        id_register.visibility = View.VISIBLE
-        id_register_progress_bar.visibility = View.GONE
+        })
+    }
+
+    fun verifyOtpAndCreateProfile() {
+        val otpCode = id_password_edit_text.text.toString()
+
+        SupabaseAuth.verifyPhoneOtp(this, otpPhone, otpCode, onSuccess = { _, userId ->
+            val fields = JSONObject()
+            fields.put("id", userId)
+            fields.put("display_name", id_name_edit_text.text.toString())
+            fields.put("phone", otpPhone)
+            fields.put("gender", getGender())
+            fields.put("date_of_birth", birthDate)
+
+            SupabaseData.upsertProfile(this, fields, onSuccess = {
+                openMain()
+            }, onError = { message ->
+                // Auth already succeeded and the session is saved — don't strand the
+                // user on this screen over a profile-save hiccup, but let them know.
+                val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+                toast.show()
+                openMain()
+            })
+        }, onError = { message ->
+            id_register.visibility = View.VISIBLE
+            id_register_progress_bar.visibility = View.GONE
+
+            val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+            toast.show()
+        })
     }
 
     fun getGender(): String {

@@ -22,6 +22,7 @@ import com.vastlb.wing_me.DataClasses.PickerClass
 import com.vastlb.wing_me.Main.MainActivity
 import com.vastlb.wing_me.Main.PickerFragment
 import com.vastlb.wing_me.R
+import com.vastlb.wing_me.Supabase.SupabaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -38,6 +39,15 @@ class LoginActivity: AppCompatActivity() {
     var isOpen = false
 
     var code = "1"
+
+    // Supabase phone auth is OTP-based (no password). This screen keeps its existing
+    // phone + single text-field UI: tap 1 sends an OTP to the phone number, then the
+    // same text field (originally the password field) is reused to collect the code
+    // for tap 2. `otpSent` tracks which step we're on. `otpPhone` remembers the exact
+    // phone string an OTP was sent to, so verify always targets the right number even
+    // if the user edits the phone field after requesting a code.
+    var otpSent = false
+    var otpPhone = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,13 +89,24 @@ class LoginActivity: AppCompatActivity() {
         }
 
         id_login.setOnClickListener {
-            if (Constants.getPhone(id_phone_edit_text).isEmpty() || id_password_edit_text.text.toString().isEmpty()) {
-                val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
-                toast.show()
+            if (!otpSent) {
+                if (Constants.getPhone(id_phone_edit_text).isEmpty()) {
+                    val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
+                    toast.show()
+                } else {
+                    id_login.visibility = View.GONE
+                    id_login_progress_bar.visibility = View.VISIBLE
+                    sendOtp()
+                }
             } else {
-                id_login.visibility = View.GONE
-                id_login_progress_bar.visibility = View.VISIBLE
-                login()
+                if (id_password_edit_text.text.toString().isEmpty()) {
+                    val toast = Toast.makeText(this, getString(R.string.alert_empty), Toast.LENGTH_LONG)
+                    toast.show()
+                } else {
+                    id_login.visibility = View.GONE
+                    id_login_progress_bar.visibility = View.VISIBLE
+                    verifyOtp()
+                }
             }
         }
 
@@ -124,65 +145,42 @@ class LoginActivity: AppCompatActivity() {
         fragmentManager.beginTransaction().show(pickerFragment).commit()
     }
 
-    fun login() {
-        val url = Constants.url + "login.php"
-        val uid = Constants.getUID(this)
+    fun sendOtp() {
+        otpPhone = "+" + code + Constants.getPhone(id_phone_edit_text)
 
-        val request = object: StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                try {
-                    loginSuccess(response)
-                } catch (e: JSONException) {
-                    val toast = Toast.makeText(this, e.toString(), Toast.LENGTH_LONG)
-                    toast.show()
-                }
-            },
-            Response.ErrorListener {
-                loginError()
-            }
-        ) {
-            override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["language"] = getString(R.string.language)
-                params["phone"] = code + Constants.getPhone(id_phone_edit_text)
-                params["password"] = id_password_edit_text.text.toString()
-                params["uid"] = uid
-                return params
-            }
-        }
-        Singleton.getInstance(this).addToRequestQueue(request)
+        SupabaseAuth.sendPhoneOtp(this, otpPhone, onSuccess = {
+            otpSent = true
+            id_password_edit_text.setText("")
+            id_password_edit_text.hint = "Enter the code we sent you"
+            id_login.visibility = View.VISIBLE
+            id_login_progress_bar.visibility = View.GONE
+
+            val toast = Toast.makeText(this, "Code sent to $otpPhone", Toast.LENGTH_LONG)
+            toast.show()
+        }, onError = { message ->
+            id_login.visibility = View.VISIBLE
+            id_login_progress_bar.visibility = View.GONE
+
+            val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+            toast.show()
+        })
     }
 
-    fun loginError() {
-        println("Error2")
-        login()
-    }
+    fun verifyOtp() {
+        val code = id_password_edit_text.text.toString()
 
-    fun loginSuccess(response: String) {
-        val json = JSONObject(response)
-        val error = json.getString("error")
-
-        if (error == "0") {
-            val message = json.getJSONObject("message")
-            val token = message.getString("token")
-
-            val preferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE)
-            val editor = preferences.edit()
-            editor.putString("Token", token)
-            editor.apply()
-
+        SupabaseAuth.verifyPhoneOtp(this, otpPhone, code, onSuccess = { _, _ ->
             id_phone_edit_text.setText("")
             id_password_edit_text.setText("")
 
             openMain()
-        } else {
-            val message = json.getString("message")
+        }, onError = { message ->
+            id_login.visibility = View.VISIBLE
+            id_login_progress_bar.visibility = View.GONE
+
             val toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
             toast.show()
-        }
-        id_login.visibility = View.VISIBLE
-        id_login_progress_bar.visibility = View.GONE
+        })
     }
 
     fun facebookLogin() {
